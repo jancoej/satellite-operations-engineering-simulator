@@ -6,20 +6,18 @@
 
   <meta charset="UTF-8" />
 
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  />
+<meta
+ name="viewport"
+ content="width=device-width, initial-scale=1.0"
+/>
 
-  <title>NTN Orbit Simulator</title>
-
+  <title>Satellite Operations & Capacity Engineering Simulator</title>
 
   <!-- CesiumJS -->
 
   <script
     src="https://cdn.jsdelivr.net/npm/cesium@1.143.0/Build/Cesium/Cesium.js">
   </script>
-
 
   <!-- Cesium CSS -->
 
@@ -28,8 +26,7 @@
     rel="stylesheet"
   />
 
-
-  <!-- Our CSS -->
+  <!-- Custom CSS -->
 
   <link
     rel="stylesheet"
@@ -38,53 +35,538 @@
 
 </head>
 
-
 <body>
 
+  <!-- ===================================================== -->
 
-  <!-- Cesium 3D Globe -->
+  <!-- MAIN APPLICATION -->
 
-  <div id="cesiumContainer"></div>
+  <!-- ===================================================== -->
 
+  <div class="app-container">
 
-  <!-- Title -->
+```
+<!-- =================================================== -->
+<!-- TOP HEADER -->
+<!-- =================================================== -->
 
-  <div class="title-panel">
+<header class="top-header">
 
-    <h1>NTN Orbit Simulator</h1>
+  <div class="header-left">
 
-    <p>Interactive 3D Earth</p>
+    <h1>
+      Satellite Operations & Capacity Engineering Simulator
+    </h1>
 
-  </div>
-
-
-  <!-- Orbit Navigation Buttons -->
-
-  <div class="orbit-controls">
-
-    <button id="btnAll">
-      ALL
-    </button>
-
-    <button id="btnLeo">
-      LEO
-    </button>
-
-    <button id="btnMeo">
-      MEO
-    </button>
-
-    <button id="btnGeo">
-      GEO
-    </button>
+    <p>
+      Mission Control · Telemetry · Performance · Capacity
+    </p>
 
   </div>
 
 
-  <!-- Main JavaScript -->
+  <div class="mission-status">
 
-  <script src="script.js?v=4"></script>
+    <span
+      id="missionStatusIndicator"
+      class="status-dot nominal">
+    </span>
 
+    <div>
+
+      <span class="status-label">
+        MISSION STATUS
+      </span>
+
+      <strong id="missionStatus">
+        NOMINAL
+      </strong>
+
+    </div>
+
+  </div>
+
+</header>
+
+
+
+<!-- =================================================== -->
+<!-- MAIN DASHBOARD -->
+<!-- =================================================== -->
+
+<main class="dashboard">
+
+
+  <!-- ================================================= -->
+  <!-- LEFT SIDE: CESIUM -->
+  <!-- ================================================= -->
+
+  <section class="map-section">
+
+
+    <!-- Cesium 3D Globe -->
+
+    <div id="cesiumContainer"></div>
+
+
+
+    <!-- Orbit Navigation Buttons -->
+
+    <div class="orbit-controls">
+
+      <button
+        id="btnAll"
+        class="orbit-button active">
+        ALL
+      </button>
+
+      <button
+        id="btnLeo"
+        class="orbit-button">
+        LEO
+      </button>
+
+      <button
+        id="btnMeo"
+        class="orbit-button">
+        MEO
+      </button>
+
+      <button
+        id="btnGeo"
+        class="orbit-button">
+        GEO
+      </button>
+
+    </div>
+
+
+
+    <!-- Mission Information Overlay -->
+
+    <div class="mission-info-panel">
+
+      <div class="info-row">
+
+        <span>
+          Simulation
+        </span>
+
+        <strong>
+          LIVE
+        </strong>
+
+      </div>
+
+
+      <div class="info-row">
+
+        <span>
+          Active Satellites
+        </span>
+
+        <strong>
+          3
+        </strong>
+
+      </div>
+
+
+      <div class="info-row">
+
+        <span>
+          Mission Time
+        </span>
+
+        <strong id="missionClock">
+          00:00:00
+        </strong>
+
+      </div>
+
+    </div>
+
+
+  </section>
+
+
+
+  <!-- ================================================= -->
+  <!-- RIGHT SIDE: OPERATIONS PANEL -->
+  <!-- ================================================= -->
+
+  <aside class="operations-panel">
+
+
+    <!-- =============================================== -->
+    <!-- SATELLITE HEALTH -->
+    <!-- =============================================== -->
+
+    <section class="data-panel">
+
+      <div class="panel-header">
+
+        <div>
+
+          <span class="panel-category">
+            SPACECRAFT
+          </span>
+
+          <h2>
+            Satellite Health
+          </h2>
+
+        </div>
+
+        <span class="panel-status nominal-text">
+          NOMINAL
+        </span>
+
+      </div>
+
+
+
+      <!-- Battery -->
+
+      <div class="telemetry-item">
+
+        <div class="telemetry-header">
+
+          <span>
+            Battery SOC
+          </span>
+
+          <strong id="batteryValue">
+            87.0 %
+          </strong>
+
+        </div>
+
+        <div class="progress-bar">
+
+          <div
+            id="batteryBar"
+            class="progress-fill"
+            style="width: 87%;">
+          </div>
+
+        </div>
+
+      </div>
+
+
+
+      <!-- Bus Voltage -->
+
+      <div class="telemetry-row">
+
+        <span>
+          Bus Voltage
+        </span>
+
+        <strong id="voltageValue">
+          48.2 V
+        </strong>
+
+      </div>
+
+
+
+      <!-- Payload Temperature -->
+
+      <div class="telemetry-row">
+
+        <span>
+          Payload Temperature
+        </span>
+
+        <strong id="temperatureValue">
+          41.3 °C
+        </strong>
+
+      </div>
+
+
+
+      <!-- Attitude Error -->
+
+      <div class="telemetry-row">
+
+        <span>
+          Attitude Error
+        </span>
+
+        <strong id="attitudeValue">
+          0.03°
+        </strong>
+
+      </div>
+
+
+    </section>
+
+
+
+    <!-- =============================================== -->
+    <!-- PAYLOAD PERFORMANCE -->
+    <!-- =============================================== -->
+
+    <section class="data-panel">
+
+      <div class="panel-header">
+
+        <div>
+
+          <span class="panel-category">
+            PAYLOAD
+          </span>
+
+          <h2>
+            Performance
+          </h2>
+
+        </div>
+
+      </div>
+
+
+
+      <!-- Throughput -->
+
+      <div class="telemetry-row">
+
+        <span>
+          Current Throughput
+        </span>
+
+        <strong id="throughputValue">
+          8.7 Gbps
+        </strong>
+
+      </div>
+
+
+
+      <!-- Capacity -->
+
+      <div class="telemetry-item">
+
+        <div class="telemetry-header">
+
+          <span>
+            Capacity Utilization
+          </span>
+
+          <strong id="capacityValue">
+            72.5 %
+          </strong>
+
+        </div>
+
+        <div class="progress-bar">
+
+          <div
+            id="capacityBar"
+            class="progress-fill"
+            style="width: 72.5%;">
+          </div>
+
+        </div>
+
+      </div>
+
+
+
+      <!-- Link Margin -->
+
+      <div class="telemetry-row">
+
+        <span>
+          Link Margin
+        </span>
+
+        <strong id="linkMarginValue">
+          5.4 dB
+        </strong>
+
+      </div>
+
+
+
+      <!-- Active Users -->
+
+      <div class="telemetry-row">
+
+        <span>
+          Active Users
+        </span>
+
+        <strong id="activeUsersValue">
+          12,460
+        </strong>
+
+      </div>
+
+
+    </section>
+
+
+
+    <!-- =============================================== -->
+    <!-- OPERATIONS SUMMARY -->
+    <!-- =============================================== -->
+
+    <section class="data-panel">
+
+      <div class="panel-header">
+
+        <div>
+
+          <span class="panel-category">
+            OPERATIONS
+          </span>
+
+          <h2>
+            System Overview
+          </h2>
+
+        </div>
+
+      </div>
+
+
+      <div class="system-grid">
+
+
+        <div class="system-card">
+
+          <span>
+            POWER
+          </span>
+
+          <strong class="nominal-text">
+            NOMINAL
+          </strong>
+
+        </div>
+
+
+        <div class="system-card">
+
+          <span>
+            THERMAL
+          </span>
+
+          <strong class="nominal-text">
+            NOMINAL
+          </strong>
+
+        </div>
+
+
+        <div class="system-card">
+
+          <span>
+            ADCS
+          </span>
+
+          <strong class="nominal-text">
+            NOMINAL
+          </strong>
+
+        </div>
+
+
+        <div class="system-card">
+
+          <span>
+            PAYLOAD
+          </span>
+
+          <strong class="nominal-text">
+            NOMINAL
+          </strong>
+
+        </div>
+
+
+      </div>
+
+    </section>
+
+
+  </aside>
+
+
+</main>
+
+
+
+<!-- =================================================== -->
+<!-- EVENT LOG -->
+<!-- =================================================== -->
+
+<section class="event-log-section">
+
+  <div class="event-log-header">
+
+    <div>
+
+      <span class="panel-category">
+        OPERATIONS
+      </span>
+
+      <h2>
+        Event Log
+      </h2>
+
+    </div>
+
+    <span class="live-indicator">
+
+      <span class="live-dot"></span>
+
+      LIVE TELEMETRY
+
+    </span>
+
+  </div>
+
+
+  <div
+    id="eventLog"
+    class="event-log">
+
+    <div class="event-item">
+
+      <span class="event-time">
+        --:--:--
+      </span>
+
+      <span class="event-type info">
+        INFO
+      </span>
+
+      <span>
+        Satellite operations simulator initialized.
+      </span>
+
+    </div>
+
+  </div>
+
+</section>
+```
+
+  </div>
+
+  <!-- ===================================================== -->
+
+  <!-- MAIN JAVASCRIPT -->
+
+  <!-- ===================================================== -->
+
+  <script src="script.js?v=5"></script>
 
 </body>
 
