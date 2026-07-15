@@ -1,85 +1,1431 @@
-html,
-body,
-#cesiumContainer {
-width: 100%;
-height: 100%;
-margin: 0;
-padding: 0;
-overflow: hidden;
-font-family: Arial, sans-serif;
-}
-
-.title-panel {
-position: absolute;
-top: 20px;
-left: 20px;
-
-background: rgba(5, 15, 30, 0.85);
-color: white;
-
-padding: 15px 25px;
-border-radius: 10px;
-
-z-index: 10;
-}
-
-.title-panel h1 {
-margin: 0;
-font-size: 24px;
-}
-
-.title-panel p {
-margin: 5px 0 0;
-color: #aaaaaa;
-}
-
+```css
 /* =====================================================
-   ORBIT CONTROLS
+   SATELLITE OPERATIONS & CAPACITY ENGINEERING SIMULATOR
+   MISSION CONTROL DASHBOARD
 ===================================================== */
 
-.orbit-controls {
-  position: absolute;
-  top: 120px;
-  left: 20px;
+
+/* =====================================================
+   1. GLOBAL RESET
+===================================================== */
+
+* {
+  box-sizing: border-box;
+}
+
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+
+  background:
+    #030811;
+
+  color:
+    #ffffff;
+
+  font-family:
+    Arial,
+    Helvetica,
+    sans-serif;
+
+  overflow:
+    hidden;
+}
+
+
+/* =====================================================
+   2. MAIN APPLICATION CONTAINER
+===================================================== */
+
+.app-container {
+  width: 100%;
+  height: 100vh;
 
   display: flex;
   flex-direction: column;
-  gap: 10px;
 
-  z-index: 20;
+  background:
+    #030811;
 }
 
-.orbit-controls button {
-  width: 90px;
-  padding: 12px;
 
-  border: 1px solid rgba(255, 255, 255, 0.25);
-  border-radius: 8px;
+/* =====================================================
+   3. TOP HEADER
+===================================================== */
 
-  background: rgba(5, 15, 30, 0.9);
-  color: white;
+.top-header {
+  height: 86px;
 
-  font-size: 14px;
-  font-weight: bold;
+  flex-shrink: 0;
 
-  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 
-  transition: 0.2s;
+  padding:
+    14px
+    24px;
+
+  background:
+    linear-gradient(
+      90deg,
+      #07111f,
+      #0b1727
+    );
+
+  border-bottom:
+    1px solid
+    rgba(
+      80,
+      180,
+      255,
+      0.22
+    );
+
+  z-index:
+    100;
 }
 
-.orbit-controls button:hover {
-  transform: translateX(5px);
-  background: rgba(20, 60, 100, 0.95);
+
+/* -----------------------------------------------------
+   HEADER LEFT
+----------------------------------------------------- */
+
+.header-left h1 {
+  margin:
+    0;
+
+  font-size:
+    22px;
+
+  font-weight:
+    700;
+
+  letter-spacing:
+    0.3px;
+
+  color:
+    #ffffff;
 }
+
+
+.header-left p {
+  margin:
+    7px
+    0
+    0;
+
+  font-size:
+    12px;
+
+  letter-spacing:
+    1.2px;
+
+  text-transform:
+    uppercase;
+
+  color:
+    #7f96ad;
+}
+
+
+/* -----------------------------------------------------
+   MISSION STATUS
+----------------------------------------------------- */
+
+.mission-status {
+  min-width:
+    185px;
+
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  gap:
+    12px;
+
+  padding:
+    10px
+    16px;
+
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.035
+    );
+
+  border:
+    1px solid
+    rgba(
+      255,
+      255,
+      255,
+      0.08
+    );
+
+  border-radius:
+    8px;
+}
+
+
+.status-label {
+  display:
+    block;
+
+  margin-bottom:
+    4px;
+
+  font-size:
+    9px;
+
+  letter-spacing:
+    1.4px;
+
+  color:
+    #7f96ad;
+}
+
+
+.mission-status strong {
+  font-size:
+    14px;
+
+  letter-spacing:
+    1px;
+}
+
+
+/* =====================================================
+   4. STATUS INDICATORS
+===================================================== */
+
+.status-dot {
+  width:
+    12px;
+
+  height:
+    12px;
+
+  border-radius:
+    50%;
+
+  flex-shrink:
+    0;
+}
+
+
+/* NOMINAL */
+
+.status-dot.nominal {
+  background:
+    #35e08b;
+
+  box-shadow:
+    0
+    0
+    12px
+    rgba(
+      53,
+      224,
+      139,
+      0.8
+    );
+}
+
+
+/* WARNING */
+
+.status-dot.warning {
+  background:
+    #ffc857;
+
+  box-shadow:
+    0
+    0
+    12px
+    rgba(
+      255,
+      200,
+      87,
+      0.8
+    );
+}
+
+
+/* CRITICAL */
+
+.status-dot.critical {
+  background:
+    #ff5b5b;
+
+  box-shadow:
+    0
+    0
+    12px
+    rgba(
+      255,
+      91,
+      91,
+      0.8
+    );
+}
+
+
+/* TEXT COLORS */
+
+.nominal-text {
+  color:
+    #35e08b;
+}
+
+
+.warning-text {
+  color:
+    #ffc857;
+}
+
+
+.critical-text {
+  color:
+    #ff5b5b;
+}
+
+
+/* =====================================================
+   5. MAIN DASHBOARD LAYOUT
+===================================================== */
+
+.dashboard {
+  flex:
+    1;
+
+  min-height:
+    0;
+
+  display:
+    grid;
+
+  grid-template-columns:
+    minmax(
+      0,
+      1fr
+    )
+    360px;
+
+  gap:
+    1px;
+
+  background:
+    rgba(
+      80,
+      180,
+      255,
+      0.12
+    );
+}
+
+
+/* =====================================================
+   6. MAP / CESIUM SECTION
+===================================================== */
+
+.map-section {
+  position:
+    relative;
+
+  min-width:
+    0;
+
+  min-height:
+    0;
+
+  overflow:
+    hidden;
+
+  background:
+    black;
+}
+
+
+#cesiumContainer {
+  position:
+    absolute;
+
+  inset:
+    0;
+
+  width:
+    100%;
+
+  height:
+    100%;
+}
+
+
+/* =====================================================
+   7. ORBIT CONTROLS
+===================================================== */
+
+.orbit-controls {
+  position:
+    absolute;
+
+  top:
+    20px;
+
+  left:
+    20px;
+
+  z-index:
+    30;
+
+  display:
+    flex;
+
+  flex-direction:
+    column;
+
+  gap:
+    8px;
+}
+
+
+.orbit-button {
+  width:
+    82px;
+
+  min-height:
+    38px;
+
+  padding:
+    8px
+    12px;
+
+  border:
+    1px solid
+    rgba(
+      255,
+      255,
+      255,
+      0.16
+    );
+
+  border-radius:
+    6px;
+
+  background:
+    rgba(
+      5,
+      15,
+      30,
+      0.88
+    );
+
+  color:
+    #c7d7e6;
+
+  font-size:
+    12px;
+
+  font-weight:
+    bold;
+
+  letter-spacing:
+    0.7px;
+
+  cursor:
+    pointer;
+
+  backdrop-filter:
+    blur(
+      6px
+    );
+
+  transition:
+    0.2s ease;
+}
+
+
+.orbit-button:hover {
+  transform:
+    translateX(
+      4px
+    );
+
+  background:
+    rgba(
+      18,
+      47,
+      76,
+      0.95
+    );
+
+  border-color:
+    rgba(
+      100,
+      200,
+      255,
+      0.5
+    );
+
+  color:
+    white;
+}
+
+
+.orbit-button.active {
+  background:
+    rgba(
+      31,
+      119,
+      180,
+      0.38
+    );
+
+  border-color:
+    rgba(
+      93,
+      200,
+      255,
+      0.8
+    );
+
+  color:
+    #6edbff;
+
+  box-shadow:
+    0
+    0
+    14px
+    rgba(
+      60,
+      180,
+      255,
+      0.18
+    );
+}
+
+
+/* INDIVIDUAL HOVER COLORS */
 
 #btnLeo:hover {
-  color: cyan;
+  color:
+    cyan;
 }
+
 
 #btnMeo:hover {
-  color: orange;
+  color:
+    orange;
 }
 
+
 #btnGeo:hover {
-  color: lime;
+  color:
+    lime;
 }
+
+
+/* =====================================================
+   8. MISSION INFO OVERLAY
+===================================================== */
+
+.mission-info-panel {
+  position:
+    absolute;
+
+  left:
+    20px;
+
+  bottom:
+    20px;
+
+  width:
+    220px;
+
+  padding:
+    12px
+    14px;
+
+  background:
+    rgba(
+      4,
+      13,
+      25,
+      0.88
+    );
+
+  border:
+    1px solid
+    rgba(
+      95,
+      190,
+      255,
+      0.2
+    );
+
+  border-radius:
+    8px;
+
+  backdrop-filter:
+    blur(
+      8px
+    );
+
+  z-index:
+    30;
+}
+
+
+.info-row {
+  display:
+    flex;
+
+  justify-content:
+    space-between;
+
+  align-items:
+    center;
+
+  padding:
+    7px
+    0;
+
+  border-bottom:
+    1px solid
+    rgba(
+      255,
+      255,
+      255,
+      0.06
+    );
+}
+
+
+.info-row:last-child {
+  border-bottom:
+    none;
+}
+
+
+.info-row span {
+  font-size:
+    11px;
+
+  color:
+    #8ca3b8;
+}
+
+
+.info-row strong {
+  font-size:
+    11px;
+
+  color:
+    #ffffff;
+
+  letter-spacing:
+    0.5px;
+}
+
+
+/* =====================================================
+   9. OPERATIONS SIDE PANEL
+===================================================== */
+
+.operations-panel {
+  min-height:
+    0;
+
+  padding:
+    14px;
+
+  overflow-y:
+    auto;
+
+  background:
+    #07111f;
+}
+
+
+/* CUSTOM SCROLLBAR */
+
+.operations-panel::-webkit-scrollbar {
+  width:
+    6px;
+}
+
+
+.operations-panel::-webkit-scrollbar-track {
+  background:
+    transparent;
+}
+
+
+.operations-panel::-webkit-scrollbar-thumb {
+  background:
+    rgba(
+      120,
+      170,
+      210,
+      0.25
+    );
+
+  border-radius:
+    10px;
+}
+
+
+/* =====================================================
+   10. DATA PANELS
+===================================================== */
+
+.data-panel {
+  margin-bottom:
+    12px;
+
+  padding:
+    16px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(
+        17,
+        33,
+        52,
+        0.96
+      ),
+      rgba(
+        10,
+        23,
+        39,
+        0.96
+      )
+    );
+
+  border:
+    1px solid
+    rgba(
+      105,
+      175,
+      225,
+      0.12
+    );
+
+  border-radius:
+    8px;
+}
+
+
+.panel-header {
+  display:
+    flex;
+
+  align-items:
+    flex-start;
+
+  justify-content:
+    space-between;
+
+  gap:
+    15px;
+
+  margin-bottom:
+    16px;
+}
+
+
+.panel-category {
+  display:
+    block;
+
+  margin-bottom:
+    5px;
+
+  font-size:
+    9px;
+
+  font-weight:
+    700;
+
+  letter-spacing:
+    1.7px;
+
+  color:
+    #4eb8e8;
+}
+
+
+.panel-header h2,
+.event-log-header h2 {
+  margin:
+    0;
+
+  font-size:
+    16px;
+
+  font-weight:
+    600;
+
+  color:
+    #f4f8fb;
+}
+
+
+.panel-status {
+  font-size:
+    10px;
+
+  font-weight:
+    bold;
+
+  letter-spacing:
+    1px;
+}
+
+
+/* =====================================================
+   11. TELEMETRY ITEMS
+===================================================== */
+
+.telemetry-row {
+  display:
+    flex;
+
+  justify-content:
+    space-between;
+
+  align-items:
+    center;
+
+  gap:
+    20px;
+
+  padding:
+    11px
+    0;
+
+  border-bottom:
+    1px solid
+    rgba(
+      255,
+      255,
+      255,
+      0.06
+    );
+}
+
+
+.telemetry-row:last-child {
+  border-bottom:
+    none;
+}
+
+
+.telemetry-row span {
+  font-size:
+    12px;
+
+  color:
+    #91a7ba;
+}
+
+
+.telemetry-row strong {
+  font-size:
+    13px;
+
+  color:
+    #ffffff;
+
+  font-variant-numeric:
+    tabular-nums;
+}
+
+
+.telemetry-item {
+  padding:
+    11px
+    0
+    13px;
+
+  border-bottom:
+    1px solid
+    rgba(
+      255,
+      255,
+      255,
+      0.06
+    );
+}
+
+
+.telemetry-header {
+  display:
+    flex;
+
+  justify-content:
+    space-between;
+
+  align-items:
+    center;
+
+  margin-bottom:
+    8px;
+}
+
+
+.telemetry-header span {
+  font-size:
+    12px;
+
+  color:
+    #91a7ba;
+}
+
+
+.telemetry-header strong {
+  font-size:
+    13px;
+
+  color:
+    #ffffff;
+
+  font-variant-numeric:
+    tabular-nums;
+}
+
+
+/* =====================================================
+   12. PROGRESS BARS
+===================================================== */
+
+.progress-bar {
+  width:
+    100%;
+
+  height:
+    6px;
+
+  overflow:
+    hidden;
+
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.07
+    );
+
+  border-radius:
+    20px;
+}
+
+
+.progress-fill {
+  height:
+    100%;
+
+  border-radius:
+    20px;
+
+  background:
+    linear-gradient(
+      90deg,
+      #1a87c7,
+      #58c9ee
+    );
+
+  box-shadow:
+    0
+    0
+    8px
+    rgba(
+      70,
+      190,
+      240,
+      0.35
+    );
+
+  transition:
+    width
+    0.6s
+    ease;
+}
+
+
+/* =====================================================
+   13. SYSTEM OVERVIEW GRID
+===================================================== */
+
+.system-grid {
+  display:
+    grid;
+
+  grid-template-columns:
+    repeat(
+      2,
+      1fr
+    );
+
+  gap:
+    8px;
+}
+
+
+.system-card {
+  display:
+    flex;
+
+  flex-direction:
+    column;
+
+  gap:
+    7px;
+
+  padding:
+    12px;
+
+  background:
+    rgba(
+      255,
+      255,
+      255,
+      0.025
+    );
+
+  border:
+    1px solid
+    rgba(
+      255,
+      255,
+      255,
+      0.07
+    );
+
+  border-radius:
+    6px;
+}
+
+
+.system-card span {
+  font-size:
+    9px;
+
+  letter-spacing:
+    1.2px;
+
+  color:
+    #728ba1;
+}
+
+
+.system-card strong {
+  font-size:
+    11px;
+
+  letter-spacing:
+    0.8px;
+}
+
+
+/* =====================================================
+   14. EVENT LOG SECTION
+===================================================== */
+
+.event-log-section {
+  height:
+    190px;
+
+  flex-shrink:
+    0;
+
+  padding:
+    14px
+    20px;
+
+  background:
+    #060f1b;
+
+  border-top:
+    1px solid
+    rgba(
+      80,
+      180,
+      255,
+      0.18
+    );
+}
+
+
+.event-log-header {
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  justify-content:
+    space-between;
+
+  margin-bottom:
+    10px;
+}
+
+
+/* =====================================================
+   15. LIVE TELEMETRY INDICATOR
+===================================================== */
+
+.live-indicator {
+  display:
+    flex;
+
+  align-items:
+    center;
+
+  gap:
+    7px;
+
+  font-size:
+    9px;
+
+  font-weight:
+    bold;
+
+  letter-spacing:
+    1.2px;
+
+  color:
+    #7f96ad;
+}
+
+
+.live-dot {
+  width:
+    7px;
+
+  height:
+    7px;
+
+  border-radius:
+    50%;
+
+  background:
+    #35e08b;
+
+  box-shadow:
+    0
+    0
+    8px
+    rgba(
+      53,
+      224,
+      139,
+      0.8
+    );
+
+  animation:
+    pulse
+    1.8s
+    infinite;
+}
+
+
+@keyframes pulse {
+
+  0% {
+    opacity:
+      1;
+  }
+
+  50% {
+    opacity:
+      0.35;
+  }
+
+  100% {
+    opacity:
+      1;
+  }
+
+}
+
+
+/* =====================================================
+   16. EVENT LOG
+===================================================== */
+
+.event-log {
+  height:
+    116px;
+
+  overflow-y:
+    auto;
+
+  font-family:
+    "Courier New",
+    monospace;
+}
+
+
+.event-log::-webkit-scrollbar {
+  width:
+    5px;
+}
+
+
+.event-log::-webkit-scrollbar-thumb {
+  background:
+    rgba(
+      120,
+      170,
+      210,
+      0.22
+    );
+
+  border-radius:
+    10px;
+}
+
+
+.event-item {
+  display:
+    grid;
+
+  grid-template-columns:
+    80px
+    75px
+    1fr;
+
+  align-items:
+    center;
+
+  gap:
+    10px;
+
+  min-height:
+    27px;
+
+  padding:
+    4px
+    0;
+
+  border-bottom:
+    1px solid
+    rgba(
+      255,
+      255,
+      255,
+      0.035
+    );
+
+  font-size:
+    11px;
+
+  color:
+    #b4c2cf;
+}
+
+
+.event-time {
+  color:
+    #62798d;
+
+  font-variant-numeric:
+    tabular-nums;
+}
+
+
+.event-type {
+  font-size:
+    9px;
+
+  font-weight:
+    bold;
+
+  letter-spacing:
+    0.7px;
+}
+
+
+.event-type.info {
+  color:
+    #59bce8;
+}
+
+
+.event-type.warning {
+  color:
+    #ffc857;
+}
+
+
+.event-type.critical {
+  color:
+    #ff5b5b;
+}
+
+
+/* =====================================================
+   17. CESIUM UI CUSTOMIZATION
+===================================================== */
+
+.cesium-viewer-bottom {
+  display:
+    none;
+}
+
+
+.cesium-widget-credits {
+  display:
+    none !important;
+}
+
+
+.cesium-viewer-toolbar {
+  top:
+    10px;
+
+  right:
+    10px;
+}
+
+
+.cesium-button {
+  background:
+    rgba(
+      7,
+      20,
+      36,
+      0.9
+    ) !important;
+
+  border-color:
+    rgba(
+      255,
+      255,
+      255,
+      0.15
+    ) !important;
+}
+
+
+/* =====================================================
+   18. RESPONSIVE DESIGN
+===================================================== */
+
+@media (
+  max-width:
+  1100px
+) {
+
+  .dashboard {
+    grid-template-columns:
+      minmax(
+        0,
+        1fr
+      )
+      320px;
+  }
+
+
+  .header-left h1 {
+    font-size:
+      18px;
+  }
+
+
+  .header-left p {
+    font-size:
+      10px;
+  }
+
+
+  .operations-panel {
+    padding:
+      10px;
+  }
+
+}
+
+
+@media (
+  max-width:
+  850px
+) {
+
+  body {
+    overflow-y:
+      auto;
+  }
+
+
+  .app-container {
+    height:
+      auto;
+
+    min-height:
+      100vh;
+  }
+
+
+  .top-header {
+    height:
+      auto;
+
+    flex-direction:
+      column;
+
+    align-items:
+      flex-start;
+
+    gap:
+      14px;
+  }
+
+
+  .mission-status {
+    width:
+      100%;
+  }
+
+
+  .dashboard {
+    display:
+      block;
+  }
+
+
+  .map-section {
+    height:
+      500px;
+  }
+
+
+  .operations-panel {
+    overflow:
+      visible;
+  }
+
+
+  .event-log-section {
+    height:
+      auto;
+
+    min-height:
+      190px;
+  }
+
+}
+```
