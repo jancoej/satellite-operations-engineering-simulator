@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <title>NTN Orbit Simulator</title>
+
+
+  <!-- CesiumJS -->
+
+  <script
+    src="https://cdn.jsdelivr.net/npm/cesium@1.143.0/Build/Cesium/Cesium.js">
+  </script>
+
+
+  <!-- Cesium CSS -->
+
+  <link
+    href="https://cdn.jsdelivr.net/npm/cesium@1.143.0/Build/Cesium/Widgets/widgets.css"
+    rel="stylesheet"
+  />
+
+
+  <!-- Our CSS -->
+
+  <link
+    rel="stylesheet"
+    href="style.css"
+  />
+
+</head>
+
+
+<body>
+
+
+  <!-- Cesium 3D Globe -->
+
+  <div id="cesiumContainer"></div>
+
+
+  <!-- Title -->
+
+  <div class="title-panel">
+
+    <h1>NTN Orbit Simulator</h1>
+
+    <p>Interactive 3D Earth</p>
+
+  </div>
+
+
+  <!-- Orbit Navigation Buttons -->
+
+  <div class="orbit-controls">
+
+    <button id="btnAll">
+      ALL
+    </button>
+
+    <button id="btnLeo">
+      LEO
+    </button>
+
+    <button id="btnMeo">
+      MEO
+    </button>
+
+    <button id="btnGeo">
+      GEO
+    </button>
+
+  </div>
+
+
+  <!-- Main JavaScript -->
+
+  <script src="script.js?v=4"></script>
+
+
+</body>
+
+</html>
