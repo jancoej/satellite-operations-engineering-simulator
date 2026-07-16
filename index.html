@@ -19,6 +19,11 @@
     src="https://cdn.jsdelivr.net/npm/cesium@1.143.0/Build/Cesium/Cesium.js">
   </script>
 
+
+  <!-- Plotly.js for telemetry trending and forecasting -->
+<script src="https://cdn.plot.ly/plotly-2.35.2.min.js"></script>
+
+  
   <!-- Cesium CSS -->
 
   <link
@@ -501,6 +506,158 @@
 </main>
 
 
+<!-- =================================================== -->
+<!-- TELEMETRY TRENDING AND FORECAST -->
+<!-- =================================================== -->
+
+<section class="telemetry-analysis-section">
+
+  <div class="telemetry-analysis-header">
+
+    <div>
+
+      <span class="panel-category">
+        ENGINEERING ANALYSIS
+      </span>
+
+      <h2>
+        Telemetry Trending & Forecast
+      </h2>
+
+      <p>
+        Actual telemetry compared against a simplified expected model.
+      </p>
+
+    </div>
+
+
+    <div class="telemetry-analysis-controls">
+
+      <label for="telemetryMetric">
+        Telemetry Parameter
+      </label>
+
+      <select id="telemetryMetric">
+
+        <option value="temperature">
+          Payload Temperature
+        </option>
+
+        <option value="battery">
+          Battery State of Charge
+        </option>
+
+        <option value="capacity">
+          Capacity Utilization
+        </option>
+
+        <option value="linkMargin">
+          Link Margin
+        </option>
+
+      </select>
+
+    </div>
+
+  </div>
+
+
+  <div class="telemetry-analysis-content">
+
+    <div
+      id="telemetryChart"
+      class="telemetry-chart">
+    </div>
+
+
+    <aside class="trend-summary-panel">
+
+      <div class="trend-status-container">
+
+        <span>
+          MODEL ASSESSMENT
+        </span>
+
+        <strong
+          id="trendStatus"
+          class="nominal-text">
+          WITHIN MODEL
+        </strong>
+
+      </div>
+
+
+      <div class="trend-summary-row">
+
+        <span>
+          Current Telemetry
+        </span>
+
+        <strong id="trendCurrentValue">
+          --
+        </strong>
+
+      </div>
+
+
+      <div class="trend-summary-row">
+
+        <span>
+          Expected Value
+        </span>
+
+        <strong id="trendExpectedValue">
+          --
+        </strong>
+
+      </div>
+
+
+      <div class="trend-summary-row">
+
+        <span>
+          Model Deviation
+        </span>
+
+        <strong id="trendDeviationValue">
+          --
+        </strong>
+
+      </div>
+
+
+      <div class="trend-summary-row">
+
+        <span>
+          Short-Term Forecast
+        </span>
+
+        <strong id="trendForecastValue">
+          --
+        </strong>
+
+      </div>
+
+
+      <div class="forecast-method">
+
+        <span>
+          FORECAST METHOD
+        </span>
+
+        <p>
+          Linear trend calculated from the latest telemetry samples.
+        </p>
+
+      </div>
+
+    </aside>
+
+  </div>
+
+</section>
+    
+
 
 <!-- =================================================== -->
 <!-- EVENT LOG -->
@@ -566,7 +723,7 @@
 
   <!-- ===================================================== -->
 
-  <script src="script.js?v=5"></script>
+  <script src="script.js?v=8"></script>
 
 </body>
 
