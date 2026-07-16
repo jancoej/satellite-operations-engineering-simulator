@@ -1,4 +1,3 @@
-```javascript
 // =====================================================
 // SATELLITE OPERATIONS & CAPACITY ENGINEERING SIMULATOR
 // VERSION 1 - MISSION CONTROL
