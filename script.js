@@ -1827,3 +1827,1262 @@ addEvent(
   "LEO, MEO and GEO spacecraft monitoring active."
 
 );
+
+// =====================================================
+// 29. TELEMETRY TRENDING AND FORECAST
+// =====================================================
+
+const telemetryTrendHistory = {
+
+  timestamps: [],
+
+  actual: {
+
+    temperature: [],
+
+    battery: [],
+
+    capacity: [],
+
+    linkMargin: []
+
+  },
+
+  expected: {
+
+    temperature: [],
+
+    battery: [],
+
+    capacity: [],
+
+    linkMargin: []
+
+  }
+
+};
+
+
+// Maximum number of samples displayed
+
+const MAX_TREND_SAMPLES = 40;
+
+
+// Telemetry is updated every 2 seconds
+
+const TELEMETRY_SAMPLE_INTERVAL = 2000;
+
+
+// Selected metric
+
+let selectedTrendMetric =
+  "temperature";
+
+
+// Metric presentation configuration
+
+const trendMetricConfiguration = {
+
+  temperature: {
+
+    label:
+      "Payload Temperature",
+
+    unit:
+      "°C",
+
+    precision:
+      1
+
+  },
+
+
+  battery: {
+
+    label:
+      "Battery State of Charge",
+
+    unit:
+      "%",
+
+    precision:
+      1
+
+  },
+
+
+  capacity: {
+
+    label:
+      "Capacity Utilization",
+
+    unit:
+      "%",
+
+    precision:
+      1
+
+  },
+
+
+  linkMargin: {
+
+    label:
+      "Link Margin",
+
+    unit:
+      "dB",
+
+    precision:
+      1
+
+  }
+
+};
+
+
+// =====================================================
+// 30. SIMPLIFIED EXPECTED TELEMETRY MODEL
+// =====================================================
+//
+// This model is deliberately simplified.
+// It represents predicted nominal spacecraft behaviour.
+// =====================================================
+
+function calculateExpectedTelemetry(
+  elapsedSeconds
+) {
+
+  return {
+
+    temperature:
+
+      41.5
+
+      +
+
+      0.6
+
+      *
+
+      Math.sin(
+        elapsedSeconds /
+        18
+      ),
+
+
+    battery:
+
+      Math.max(
+
+        80,
+
+        87
+
+        -
+
+        elapsedSeconds *
+        0.002
+
+      ),
+
+
+    capacity:
+
+      70
+
+      +
+
+      4
+
+      *
+
+      Math.sin(
+        elapsedSeconds /
+        14
+      ),
+
+
+    linkMargin:
+
+      5.5
+
+      -
+
+      0.25
+
+      *
+
+      Math.sin(
+        elapsedSeconds /
+        20
+      )
+
+  };
+
+}
+
+
+// =====================================================
+// 31. RECORD TELEMETRY SAMPLE
+// =====================================================
+
+function recordTelemetrySample() {
+
+  const elapsedSeconds =
+
+    (
+      Date.now()
+
+      -
+
+      simulationStartTime
+    )
+
+    /
+
+    1000;
+
+
+  const expectedTelemetry =
+
+    calculateExpectedTelemetry(
+      elapsedSeconds
+    );
+
+
+  telemetryTrendHistory.timestamps.push(
+
+    new Date()
+
+  );
+
+
+  telemetryTrendHistory.actual.temperature.push(
+
+    telemetry.temperature
+
+  );
+
+
+  telemetryTrendHistory.actual.battery.push(
+
+    telemetry.battery
+
+  );
+
+
+  telemetryTrendHistory.actual.capacity.push(
+
+    telemetry.capacity
+
+  );
+
+
+  telemetryTrendHistory.actual.linkMargin.push(
+
+    telemetry.linkMargin
+
+  );
+
+
+  telemetryTrendHistory.expected.temperature.push(
+
+    expectedTelemetry.temperature
+
+  );
+
+
+  telemetryTrendHistory.expected.battery.push(
+
+    expectedTelemetry.battery
+
+  );
+
+
+  telemetryTrendHistory.expected.capacity.push(
+
+    expectedTelemetry.capacity
+
+  );
+
+
+  telemetryTrendHistory.expected.linkMargin.push(
+
+    expectedTelemetry.linkMargin
+
+  );
+
+
+  trimTelemetryHistory();
+
+
+  updateTelemetryTrendChart();
+
+}
+
+
+// =====================================================
+// 32. LIMIT TELEMETRY HISTORY
+// =====================================================
+
+function trimTelemetryHistory() {
+
+  if (
+
+    telemetryTrendHistory.timestamps.length
+
+    <=
+
+    MAX_TREND_SAMPLES
+
+  ) {
+
+    return;
+
+  }
+
+
+  telemetryTrendHistory.timestamps.shift();
+
+
+  Object.keys(
+
+    telemetryTrendHistory.actual
+
+  ).forEach(
+
+    function (metric) {
+
+      telemetryTrendHistory
+        .actual[
+          metric
+        ]
+        .shift();
+
+
+      telemetryTrendHistory
+        .expected[
+          metric
+        ]
+        .shift();
+
+    }
+
+  );
+
+}
+
+
+// =====================================================
+// 33. LINEAR SHORT-TERM FORECAST
+// =====================================================
+
+function calculateLinearForecast(
+  values,
+  numberOfSteps = 6
+) {
+
+  const sampleWindow =
+
+    values.slice(
+      -10
+    );
+
+
+  const sampleCount =
+
+    sampleWindow.length;
+
+
+  if (
+    sampleCount === 0
+  ) {
+
+    return [];
+
+  }
+
+
+  if (
+    sampleCount === 1
+  ) {
+
+    return Array(
+      numberOfSteps
+    ).fill(
+      sampleWindow[0]
+    );
+
+  }
+
+
+  let sumX = 0;
+
+  let sumY = 0;
+
+  let sumXY = 0;
+
+  let sumXX = 0;
+
+
+  for (
+    let index = 0;
+    index < sampleCount;
+    index += 1
+  ) {
+
+    sumX +=
+      index;
+
+
+    sumY +=
+      sampleWindow[index];
+
+
+    sumXY +=
+
+      index
+
+      *
+
+      sampleWindow[index];
+
+
+    sumXX +=
+
+      index
+
+      *
+
+      index;
+
+  }
+
+
+  const denominator =
+
+    sampleCount
+
+    *
+
+    sumXX
+
+    -
+
+    sumX
+
+    *
+
+    sumX;
+
+
+  const slope =
+
+    denominator === 0
+
+      ?
+
+      0
+
+      :
+
+      (
+
+        sampleCount
+
+        *
+
+        sumXY
+
+        -
+
+        sumX
+
+        *
+
+        sumY
+
+      )
+
+      /
+
+      denominator;
+
+
+  const intercept =
+
+    (
+
+      sumY
+
+      -
+
+      slope
+
+      *
+
+      sumX
+
+    )
+
+    /
+
+    sampleCount;
+
+
+  const forecastValues = [];
+
+
+  for (
+    let step = 1;
+    step <= numberOfSteps;
+    step += 1
+  ) {
+
+    forecastValues.push(
+
+      intercept
+
+      +
+
+      slope
+
+      *
+
+      (
+        sampleCount
+
+        -
+
+        1
+
+        +
+
+        step
+      )
+
+    );
+
+  }
+
+
+  return forecastValues;
+
+}
+
+
+// =====================================================
+// 34. BUILD FORECAST TIMESTAMPS
+// =====================================================
+
+function buildForecastTimestamps(
+  numberOfSteps
+) {
+
+  const timestamps =
+
+    telemetryTrendHistory.timestamps;
+
+
+  if (
+    timestamps.length === 0
+  ) {
+
+    return [];
+
+  }
+
+
+  const lastTimestamp =
+
+    timestamps[
+      timestamps.length - 1
+    ];
+
+
+  const forecastTimestamps = [];
+
+
+  for (
+    let step = 1;
+    step <= numberOfSteps;
+    step += 1
+  ) {
+
+    forecastTimestamps.push(
+
+      new Date(
+
+        lastTimestamp.getTime()
+
+        +
+
+        TELEMETRY_SAMPLE_INTERVAL
+
+        *
+
+        step
+
+      )
+
+    );
+
+  }
+
+
+  return forecastTimestamps;
+
+}
+
+
+// =====================================================
+// 35. UPDATE TELEMETRY CHART
+// =====================================================
+
+function updateTelemetryTrendChart() {
+
+  const metric =
+
+    selectedTrendMetric;
+
+
+  const configuration =
+
+    trendMetricConfiguration[
+      metric
+    ];
+
+
+  const actualValues =
+
+    telemetryTrendHistory
+      .actual[
+        metric
+      ];
+
+
+  const expectedValues =
+
+    telemetryTrendHistory
+      .expected[
+        metric
+      ];
+
+
+  const forecastValues =
+
+    calculateLinearForecast(
+
+      actualValues,
+
+      6
+
+    );
+
+
+  const forecastTimestamps =
+
+    buildForecastTimestamps(
+
+      forecastValues.length
+
+    );
+
+
+  const actualTrace = {
+
+    x:
+      telemetryTrendHistory.timestamps,
+
+    y:
+      actualValues,
+
+    type:
+      "scatter",
+
+    mode:
+      "lines+markers",
+
+    name:
+      "Actual Telemetry",
+
+    line: {
+
+      color:
+        "#55c8ed",
+
+      width:
+        2
+
+    },
+
+    marker: {
+
+      size:
+        4
+
+    }
+
+  };
+
+
+  const expectedTrace = {
+
+    x:
+      telemetryTrendHistory.timestamps,
+
+    y:
+      expectedValues,
+
+    type:
+      "scatter",
+
+    mode:
+      "lines",
+
+    name:
+      "Expected Model",
+
+    line: {
+
+      color:
+        "#35e08b",
+
+      width:
+        2,
+
+      dash:
+        "dash"
+
+    }
+
+  };
+
+
+  const forecastTrace = {
+
+    x:
+      forecastTimestamps,
+
+    y:
+      forecastValues,
+
+    type:
+      "scatter",
+
+    mode:
+      "lines+markers",
+
+    name:
+      "Forecast",
+
+    line: {
+
+      color:
+        "#ffc857",
+
+      width:
+        2,
+
+      dash:
+        "dot"
+
+    },
+
+    marker: {
+
+      size:
+        4
+
+    }
+
+  };
+
+
+  const chartLayout = {
+
+    autosize:
+      true,
+
+    margin: {
+
+      left:
+        52,
+
+      right:
+        18,
+
+      top:
+        30,
+
+      bottom:
+        38
+
+    },
+
+    paper_bgcolor:
+      "#081522",
+
+    plot_bgcolor:
+      "#081522",
+
+    font: {
+
+      family:
+        "Arial, sans-serif",
+
+      size:
+        10,
+
+      color:
+        "#93a9bc"
+
+    },
+
+    legend: {
+
+      orientation:
+        "h",
+
+      x:
+        0,
+
+      y:
+        1.16,
+
+      font: {
+
+        size:
+          9
+
+      }
+
+    },
+
+    xaxis: {
+
+      type:
+        "date",
+
+      gridcolor:
+        "rgba(255,255,255,0.05)",
+
+      linecolor:
+        "rgba(255,255,255,0.12)",
+
+      tickformat:
+        "%H:%M:%S",
+
+      title: {
+
+        text:
+          "Mission Time",
+
+        font: {
+
+          size:
+            9
+
+        }
+
+      }
+
+    },
+
+    yaxis: {
+
+      gridcolor:
+        "rgba(255,255,255,0.05)",
+
+      linecolor:
+        "rgba(255,255,255,0.12)",
+
+      title: {
+
+        text:
+
+          configuration.label
+
+          +
+
+          " ("
+
+          +
+
+          configuration.unit
+
+          +
+
+          ")",
+
+        font: {
+
+          size:
+            9
+
+        }
+
+      }
+
+    },
+
+    hovermode:
+      "x unified",
+
+    showlegend:
+      true
+
+  };
+
+
+  const chartConfiguration = {
+
+    responsive:
+      true,
+
+    displaylogo:
+      false,
+
+    modeBarButtonsToRemove: [
+
+      "lasso2d",
+
+      "select2d",
+
+      "autoScale2d",
+
+      "toggleSpikelines"
+
+    ]
+
+  };
+
+
+  Plotly.react(
+
+    "telemetryChart",
+
+    [
+
+      actualTrace,
+
+      expectedTrace,
+
+      forecastTrace
+
+    ],
+
+    chartLayout,
+
+    chartConfiguration
+
+  );
+
+
+  updateTrendSummary(
+
+    metric,
+
+    actualValues,
+
+    expectedValues,
+
+    forecastValues
+
+  );
+
+}
+
+
+// =====================================================
+// 36. UPDATE TREND SUMMARY
+// =====================================================
+
+function updateTrendSummary(
+  metric,
+  actualValues,
+  expectedValues,
+  forecastValues
+) {
+
+  if (
+
+    actualValues.length === 0
+
+    ||
+
+    expectedValues.length === 0
+
+  ) {
+
+    return;
+
+  }
+
+
+  const configuration =
+
+    trendMetricConfiguration[
+      metric
+    ];
+
+
+  const currentValue =
+
+    actualValues[
+      actualValues.length - 1
+    ];
+
+
+  const expectedValue =
+
+    expectedValues[
+      expectedValues.length - 1
+    ];
+
+
+  const forecastValue =
+
+    forecastValues.length > 0
+
+      ?
+
+      forecastValues[
+        forecastValues.length - 1
+      ]
+
+      :
+
+      currentValue;
+
+
+  const percentageDeviation =
+
+    expectedValue === 0
+
+      ?
+
+      0
+
+      :
+
+      (
+
+        (
+          currentValue
+
+          -
+
+          expectedValue
+        )
+
+        /
+
+        expectedValue
+
+      )
+
+      *
+
+      100;
+
+
+  document
+    .getElementById(
+      "trendCurrentValue"
+    )
+    .textContent =
+
+      currentValue.toFixed(
+        configuration.precision
+      )
+
+      +
+
+      " "
+
+      +
+
+      configuration.unit;
+
+
+  document
+    .getElementById(
+      "trendExpectedValue"
+    )
+    .textContent =
+
+      expectedValue.toFixed(
+        configuration.precision
+      )
+
+      +
+
+      " "
+
+      +
+
+      configuration.unit;
+
+
+  document
+    .getElementById(
+      "trendDeviationValue"
+    )
+    .textContent =
+
+      (
+
+        percentageDeviation >= 0
+
+          ?
+
+          "+"
+
+          :
+
+          ""
+
+      )
+
+      +
+
+      percentageDeviation.toFixed(
+        1
+      )
+
+      +
+
+      " %";
+
+
+  document
+    .getElementById(
+      "trendForecastValue"
+    )
+    .textContent =
+
+      forecastValue.toFixed(
+        configuration.precision
+      )
+
+      +
+
+      " "
+
+      +
+
+      configuration.unit;
+
+
+  updateTrendAssessment(
+
+    Math.abs(
+      percentageDeviation
+    )
+
+  );
+
+}
+
+
+// =====================================================
+// 37. UPDATE MODEL ASSESSMENT
+// =====================================================
+
+function updateTrendAssessment(
+  absoluteDeviation
+) {
+
+  const trendStatus =
+
+    document.getElementById(
+      "trendStatus"
+    );
+
+
+  trendStatus.classList.remove(
+
+    "nominal-text",
+
+    "warning-text",
+
+    "critical-text"
+
+  );
+
+
+  if (
+    absoluteDeviation < 5
+  ) {
+
+    trendStatus.textContent =
+      "WITHIN MODEL";
+
+
+    trendStatus.classList.add(
+      "nominal-text"
+    );
+
+  }
+
+
+  else if (
+    absoluteDeviation < 10
+  ) {
+
+    trendStatus.textContent =
+      "MODEL DEVIATION";
+
+
+    trendStatus.classList.add(
+      "warning-text"
+    );
+
+  }
+
+
+  else {
+
+    trendStatus.textContent =
+      "SIGNIFICANT DEVIATION";
+
+
+    trendStatus.classList.add(
+      "critical-text"
+    );
+
+  }
+
+}
+
+
+// =====================================================
+// 38. TELEMETRY METRIC SELECTION
+// =====================================================
+
+document
+  .getElementById(
+    "telemetryMetric"
+  )
+  .addEventListener(
+
+    "change",
+
+    function () {
+
+      selectedTrendMetric =
+        this.value;
+
+
+      updateTelemetryTrendChart();
+
+    }
+
+  );
+
+
+// Initialize first telemetry trend sample
+
+recordTelemetrySample();
