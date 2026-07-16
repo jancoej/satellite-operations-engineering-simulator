@@ -2442,6 +2442,31 @@ function buildForecastTimestamps(
 
 function updateTelemetryTrendChart() {
 
+    if (typeof Plotly === "undefined") {
+
+    console.error(
+      "Plotly.js was not loaded. Check the Plotly script in index.html."
+    );
+
+    const trendStatus =
+      document.getElementById("trendStatus");
+
+    trendStatus.textContent =
+      "CHART LIBRARY ERROR";
+
+    trendStatus.classList.remove(
+      "nominal-text",
+      "warning-text",
+      "critical-text"
+    );
+
+    trendStatus.classList.add(
+      "critical-text"
+    );
+
+    return;
+  }
+
   const metric =
 
     selectedTrendMetric;
