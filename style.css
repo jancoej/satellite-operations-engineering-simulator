@@ -1428,4 +1428,243 @@ body {
   }
 
 }
+
+/* =====================================================
+   19. TELEMETRY TRENDING AND FORECAST
+===================================================== */
+
+.telemetry-analysis-section {
+  height: 290px;
+  flex-shrink: 0;
+
+  padding: 14px 20px;
+
+  background: #07111f;
+
+  border-top: 1px solid rgba(80, 180, 255, 0.18);
+}
+
+
+.telemetry-analysis-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+
+  gap: 20px;
+
+  margin-bottom: 10px;
+}
+
+
+.telemetry-analysis-header h2 {
+  margin: 0;
+
+  font-size: 16px;
+  font-weight: 600;
+
+  color: #f4f8fb;
+}
+
+
+.telemetry-analysis-header p {
+  margin: 5px 0 0;
+
+  font-size: 10px;
+
+  color: #728ba1;
+}
+
+
+.telemetry-analysis-controls {
+  display: flex;
+  flex-direction: column;
+
+  gap: 5px;
+
+  min-width: 220px;
+}
+
+
+.telemetry-analysis-controls label {
+  font-size: 9px;
+  font-weight: bold;
+
+  letter-spacing: 1.1px;
+
+  color: #728ba1;
+}
+
+
+.telemetry-analysis-controls select {
+  height: 34px;
+
+  padding: 0 10px;
+
+  border: 1px solid rgba(90, 180, 230, 0.25);
+  border-radius: 5px;
+
+  background: #0d1c2d;
+  color: #ffffff;
+
+  font-size: 11px;
+
+  outline: none;
+  cursor: pointer;
+}
+
+
+.telemetry-analysis-controls select:focus {
+  border-color: rgba(80, 200, 255, 0.75);
+}
+
+
+.telemetry-analysis-content {
+  height: 215px;
+
+  display: grid;
+
+  grid-template-columns: minmax(0, 1fr) 280px;
+
+  gap: 12px;
+}
+
+
+.telemetry-chart {
+  width: 100%;
+  height: 215px;
+
+  overflow: hidden;
+
+  background: #081522;
+
+  border: 1px solid rgba(105, 175, 225, 0.12);
+  border-radius: 7px;
+}
+
+
+.trend-summary-panel {
+  padding: 13px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(17, 33, 52, 0.96),
+      rgba(10, 23, 39, 0.96)
+    );
+
+  border: 1px solid rgba(105, 175, 225, 0.12);
+  border-radius: 7px;
+}
+
+
+.trend-status-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 10px;
+
+  padding-bottom: 10px;
+  margin-bottom: 3px;
+
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+
+.trend-status-container span {
+  font-size: 8px;
+  font-weight: bold;
+
+  letter-spacing: 1.2px;
+
+  color: #728ba1;
+}
+
+
+.trend-status-container strong {
+  font-size: 9px;
+
+  letter-spacing: 0.8px;
+}
+
+
+.trend-summary-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 15px;
+
+  padding: 8px 0;
+
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+
+.trend-summary-row span {
+  font-size: 10px;
+
+  color: #8ca3b8;
+}
+
+
+.trend-summary-row strong {
+  font-size: 11px;
+
+  color: #ffffff;
+
+  font-variant-numeric: tabular-nums;
+}
+
+
+.forecast-method {
+  margin-top: 10px;
+}
+
+
+.forecast-method span {
+  font-size: 8px;
+  font-weight: bold;
+
+  letter-spacing: 1.1px;
+
+  color: #4eb8e8;
+}
+
+
+.forecast-method p {
+  margin: 5px 0 0;
+
+  font-size: 9px;
+  line-height: 1.35;
+
+  color: #728ba1;
+}
+
+
+@media (max-width: 1000px) {
+
+  .telemetry-analysis-section {
+    height: auto;
+  }
+
+
+  .telemetry-analysis-content {
+    height: auto;
+
+    grid-template-columns: 1fr;
+  }
+
+
+  .telemetry-chart {
+    height: 240px;
+  }
+
+
+  .trend-summary-panel {
+    min-height: 190px;
+  }
+
+}
+
 ```
