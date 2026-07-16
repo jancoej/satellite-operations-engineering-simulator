@@ -1113,6 +1113,7 @@ function updateTelemetry() {
   // ---------------------------------------------------
 
   evaluateMissionStatus();
+  recordTelemetrySample();
 
 }
 
